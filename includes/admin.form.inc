@@ -66,16 +66,23 @@ function islandora_checksum_admin_form(array $form, array &$form_state) {
     '#maxlength' => 255,
   );
 
+  $form['islandora_checksum_checksum_configuration']['islandora_checksum_deriv_regeneration_bypass'] = array(
+    '#title' => t('Bypass derivative regeneration when updating only checksums'),
+    '#type' => 'checkbox',
+    '#default_value' => variable_get('islandora_checksum_deriv_regeneration_bypass', FALSE),
+    '#description' => t('Note that this setting will need to be saved first before attempting to retroactively enable checksums using the controls below.'),
+  );
+
   $form['islandora_checksum_checksum_retro_enable'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Retroactively enable checksums'),
-    '#description' => t('Enabling checksums retroactively regenerates derivative versions for all objects in the target collection that did not previously have checksum values.'),
+    '#title' => t('Apply or re-apply checksums'),
+    '#description' => t('Checksums will be applied to datastreams without checksums, or re-applied to datastreams whose checksumType does not match the site configured checksum type. Derivatives will be generated unless the above bypass has been enabled previously.'),
   );
   $form['islandora_checksum_checksum_retro_enable']['collection'] = array(
     '#type' => 'select',
     '#title' => t('Collection'),
     '#options' => $collections,
-    '#description' => t('Select a collection to retroactively enable checksums on.'),
+    '#description' => t('Select a collection to apply or re-apply checksums on.'),
   );
   $form['islandora_checksum_checksum_retro_enable']['islandora_checksum_log_retro_errors'] = array(
     '#type' => 'checkbox',
@@ -85,7 +92,7 @@ function islandora_checksum_admin_form(array $form, array &$form_state) {
   );
   $form['islandora_checksum_checksum_retro_enable']['apply_batch'] = array(
     '#type' => 'submit',
-    '#value' => t('Enable'),
+    '#value' => t('Apply'),
     '#submit' => array('islandora_checksum_apply_retro'),
   );
   $form['islandora_checksum_checksum_retro_enable']['contact_information'] = array(
