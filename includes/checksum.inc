@@ -8,6 +8,8 @@
 /**
  * Modifies an existing object's datastream checksums.
  *
+ * Used in the retroactive checksum generation batch.
+ *
  * @param string $pid
  *   The PID of the object the datastream belongs to.
  * @param array $dsids
