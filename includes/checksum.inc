@@ -8,6 +8,8 @@
 /**
  * Modifies an existing object's datastream checksums.
  *
+ * Used in the retroactive checksum generation batch.
+ *
  * @param string $pid
  *   The PID of the object the datastream belongs to.
  * @param array $dsids
@@ -26,16 +28,16 @@ function islandora_checksum_set_checksums($pid, $dsids = array(), $type = NULL) 
     )));
   }
 
-  if (empty($dsids)) {
-    $dsids = islandora_checksum_unpack_dsid_filter();
-  }
   if (is_null($type)) {
     $type = variable_get('islandora_checksum_checksum_type', 'DISABLED');
   }
 
-  foreach ($dsids as $dsid) {
+  foreach ($object as $ds) {
+    $dsid = $ds->id;
     if (isset($object[$dsid]) && $object[$dsid]->checksumType != $type) {
-      $object[$dsid]->checksumType = $type;
+      if (islandora_checksum_dsid_is_in_filter($dsid)) {
+        $object[$dsid]->checksumType = $type;
+      }
     }
   }
 }
