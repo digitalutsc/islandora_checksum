@@ -330,5 +330,10 @@ function islandora_checksum_unpack_dsid_filter() {
  */
 function islandora_checksum_dsid_is_in_filter($dsid) {
   $filter = islandora_checksum_unpack_dsid_filter();
-  return in_array($dsid, $filter);
+  if (count($filter) === 0) {
+    return TRUE;
+  }
+  else {
+    return in_array($dsid, $filter);
+  }
 }
