@@ -100,12 +100,15 @@ WHERE {
     ?object <fedora-model:createdDate> ?date .
   } UNION {
     ?object <{$islandora_rels_ext}isPageOf> ?book .
+    ?object <fedora-model:createdDate> ?date .
     ?book <fedora-rels-ext:isMemberOfCollection> <info:fedora/$pid> .
   } UNION {
     ?object <fedora-rels-ext:isConstituentOf> ?compound .
+    ?object <fedora-model:createdDate> ?date .
     ?compound <fedora-rels-ext:isMemberOfCollection> <info:fedora/$pid> .
   } UNION {
     ?object <fedora-rels-ext:isMemberOf> ?issue .
+    ?object <fedora-model:createdDate> ?date .
     ?issue <fedora-rels-ext:isMemberOf> ?newspaper .
     ?newspaper <fedora-rels-ext:isMemberOfCollection> <info:fedora/$pid> .
   }
