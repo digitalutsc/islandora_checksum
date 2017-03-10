@@ -97,7 +97,6 @@ FROM <#ri>
 WHERE {
   {
     ?object <fedora-rels-ext:isMemberOfCollection> <info:fedora/$pid> .
-    ?object <fedora-model:createdDate> ?date .
   } UNION {
     ?object <{$islandora_rels_ext}isPageOf> ?book .
     ?book <fedora-rels-ext:isMemberOfCollection> <info:fedora/$pid> .
@@ -109,6 +108,7 @@ WHERE {
     ?issue <fedora-rels-ext:isMemberOf> ?newspaper .
     ?newspaper <fedora-rels-ext:isMemberOfCollection> <info:fedora/$pid> .
   }
+  ?object <fedora-model:createdDate> ?date .
 EOF;
   if ($slice_params) {
     $ri_query .= <<<EOF
