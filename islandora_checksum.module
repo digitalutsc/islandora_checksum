@@ -36,7 +36,7 @@ function islandora_checksum_islandora_datastream_alter(AbstractObject $object, A
 /**
  * Implements hook_islandora_derivative_alter().
  */
-function islandora_checksum_islandora_derivative_alter(&$derivatives, AbstractObject $object, $ds_modified_params) {
+function islandora_checksum_islandora_derivative_alter(&$derivatives, AbstractObject $object = NULL, $ds_modified_params = array()) {
   if (!empty($ds_modified_params) && variable_get('islandora_checksum_deriv_regeneration_bypass', FALSE)) {
     // When only the checksumType is modified, we don't want to trigger
     // derivative regeneration.
