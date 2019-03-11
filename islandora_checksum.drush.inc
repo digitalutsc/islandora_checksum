@@ -46,7 +46,7 @@ function islandora_checksum_drush_command() {
       ),
       'options' => array(
         'pids' => array(
-          'description' => dt('A comma-separated list of PIDs for which to update checksums.'),
+          'description' => dt('A comma-separated list of PIDs for which to update checksums. Note currently all valid PIDs will be put into the batch.'),
           'required' => TRUE,
         ),
         'dsids' => array(
@@ -55,10 +55,6 @@ function islandora_checksum_drush_command() {
         ),
         'checksum' => array(
           'description' => dt('The checksum configuration to apply to the datastreams found. Omit to use the default configured value. Valid options are DISABLED, MD5, SHA-1, SHA-256, SHA-384, and SHA-512.'),
-          'required' => FALSE,
-        ),
-        'limit' => array(
-          'description' => dt('The number of checksums to apply in each iteration of the batches. Defaults to 10.'),
           'required' => FALSE,
         ),
       ),
@@ -101,29 +97,36 @@ function drush_islandora_checksum_update_checksums() {
  * Sets the batch for updating checksums based on a list of PIDs.
  */
 function drush_islandora_checksum_update_checksums_by_PID() {
-  /*
-  $collection_pids = explode(',', trim(drush_get_option('collections')));
+
+  $object_pids = explode(',', trim(drush_get_option('pids')));
   $dsids = drush_get_option('dsids', array());
   if (!is_array($dsids)) {
     $dsids = explode(',', trim($dsids));
   }
   $limit = drush_get_option('limit', 10);
   $batch = FALSE;
-  foreach ($collection_pids as $collection_pid) {
-    $collection = islandora_object_load($collection_pid);
-    if (!$collection) {
-      drush_print(dt('No such collection !id; skipping ...', array(
-        '!id' => $collection_pid,
+  $valid_pids = array();
+  foreach ($object_pids as $pid) {
+    $object = islandora_object_load($pid);
+    if (!$object) {
+      drush_print(dt('No such object !id; skipping ...', array(
+        '!id' => $pid,
       )));
     }
     else {
-      batch_set(islandora_checksum_get_collection_checksum_update_batch($collection_pid, $limit, $dsids));
-      $batch = TRUE;
+      //Need to create a batch based on the list of PIDs.
+      $valid_pids[]= $pid;
+      drush_print(dt('Object PID is !id', array(
+        '!id' => $pid,
+      )));
     }
+  }
+
+  if ($valid_pids) {
+    batch_set(islandora_checksum_get_pids_checksum_update_batch($valid_pids, $dsids));
+    $batch = TRUE;
   }
   if ($batch) {
     drush_backend_batch_process();
   }
-  */
-  print "drush_islandora_checksum_update_checksums_by_PID called.";
 }

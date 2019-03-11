@@ -279,3 +279,86 @@ function islandora_checksum_dsid_is_in_filter($dsid) {
     return in_array($dsid, $filter);
   }
 }
+
+// Below functions related to checksumming by list of object PIDs.
+
+/**
+ * Gets the batch definition for enabling or re-applying checksums.
+ *
+ * @param array $pids
+ *   The array of PIDs to apply checksums to.
+ * @param array $dsids
+ *   The DSIDs to apply checksums to. Leave empty to use the default
+ *   configuration.
+ *
+ * @return array
+ *   The batch definition.
+ */
+function islandora_checksum_get_pids_checksum_update_batch($pids, $dsids = array()) {
+  if (empty($dsids)) {
+    $dsids = islandora_checksum_unpack_dsid_filter();
+  }
+  return array(
+    'operations' => array(
+      array(
+        'islandora_checksum_enable_object_PID_checksums',
+        array(
+          $pids,
+          $dsids,
+        ),
+      ),
+    ),
+    'title' => 'Enabling checksums',
+    'finished' => 'islandora_checksum_batch_finished',
+    'init_message' => t('Getting objects to checksum ...'),
+    'progress_message' => t('Time elapsed: @elapsed <br/>Estimated time remaining: @estimate.'),
+    'error_message' => t('An error occurred and not all checksums were set.'),
+  );
+}
+
+/**
+ * Batch process to enable checksums for a list of PIDS.
+ *
+ * @param array $pids
+ *   The array of valid PIDs.
+ * @param array $dsids
+ *   The datastream DSIDs to target.
+ * @param array $context
+ *   The batch context.
+ */
+function islandora_checksum_enable_object_PID_checksums($pids, $dsids, &$context) {
+  $sandbox = &$context['sandbox'];
+  module_load_include('inc', 'islandora_checksum', 'includes/checksum');
+  if (empty($sandbox)) {
+    // Get count of PIDS (previously checked in drush_islandora_checksum_update_checksums)
+    $sandbox['total'] = count($pids);
+    if ($sandbox['total'] == 0) {
+      $context['message'] = t('No objects to apply checksums to.');
+      $context['finished'] = 1;
+      return;
+    }
+    $sandbox['current'] = 0;
+    $sandbox['offset_params'] = NULL;
+    $sandbox['checksum_type'] = variable_get('islandora_checksum_checksum_type', 'DISABLED');
+  }
+
+  // Forget about slicing for now.
+  // $slice = islandora_checksum_get_collection_member_details($collection, FALSE, $limit,     $sandbox['offset_params']);
+  //foreach ($slice as $member) {
+  foreach ($pids as $pid) {
+    islandora_checksum_set_checksums($pid, $dsids, $sandbox['checksum_type']);
+    $sandbox['current']++;
+    /*$sandbox['offset_params'] = array(
+      'offset_pid' => $member['object']['value'],
+      'offset_date' => $member['date']['value'],
+    );*/
+    $context['results'][] = $pid;
+  }
+
+  $context['message'] = t('Set checksums for @current/@total objects.', array(
+    '@current' => $sandbox['current'],
+    '@total' => $sandbox['total'],
+  ));
+  $context['finished'] = $sandbox['current'] / $sandbox['total'];
+}
+
