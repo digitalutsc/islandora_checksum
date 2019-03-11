@@ -25,6 +25,10 @@ function islandora_checksum_drush_command() {
           'description' => dt('A comma-separated list of DSIDs to update on the given collection. Omit to use the default configured ones.'),
           'required' => FALSE,
         ),
+        'pids' => array(
+          'description' => dt('A comma-separated list of PIDs for which to update checksums.'),
+          'required' => FALSE,
+        ),
         'checksum' => array(
           'description' => dt('The checksum configuration to apply to the datastreams found. Omit to use the default configured value. Valid options are DISABLED, MD5, SHA-1, SHA-256, SHA-384, and SHA-512.'),
           'required' => FALSE,
