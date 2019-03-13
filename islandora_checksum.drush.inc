@@ -59,7 +59,7 @@ function islandora_checksum_drush_command() {
         ),
       ),
       'examples' => array(
-        'Update the checksum for an object based on PID using SHA-512.' => 'drush islandora-checksum-update-checksums-by-pid --pids=islandora:1234 --checksum=SHA-512',
+        'Update the checksum for an object based on PID. Note that you must specify the fedoraAdmin user, in this case, user 1.' => 'drush -u 1 islandora-checksum-update-checksums-by-pid --pids=islandora:1234',
       ),
     ),
   );
